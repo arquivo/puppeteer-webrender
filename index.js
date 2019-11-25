@@ -1,37 +1,17 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
 const PuppeteerHar = require('./puppeteer-har');
+const behaviour = require('./behaviour');
 
 const app = express();
 const port = process.argv[2];
-
-async function autoScroll(page) {
-    await page.evaluate(async () => {
-        await new Promise((resolve, reject) => {
-            var totalHeight = 0;
-            var distance = 100;
-            var timer = setInterval(() => {
-                var scrollHeight = document.body.scrollHeight;
-                window.scrollBy(0, distance);
-                totalHeight += distance;
-
-                if (totalHeight >= scrollHeight || totalHeight > 4000) {
-                    clearInterval(timer);
-                    // Scroll back to the top:
-                    window.scrollTo(0, 0);
-                    resolve();
-                }
-            }, 200);
-        });
-    });
-}
 
 async function renderScreenshot(url) {
     // should change this
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
 
-    await page.goto(url, {waitUntil: 'load', timeout: 10000}).then(() =>{
+    await page.goto(url, {waitUntil: 'load', timeout: 10000}).then(() => {
         console.log('Success loading page', url)
     }).catch((err) => {
         console.log('Something went wrong loading page', url, err)
@@ -54,7 +34,7 @@ app.get('/screenshot', (request, response, next) => {
         .catch(error => next(error))
 });
 
-async function generateHar(url){
+async function generateHar(url) {
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.goto(url, 'networkidle2');
@@ -64,19 +44,54 @@ async function generateHar(url){
 
     // Switch through a few widths to encourage JS-based responsive image loading:
     console.log("Setting viewport to: 480x1024");
-    await page.setViewport({ width: 480, height: 1024, deviceScaleFactor: 1, isMobile: false, hasTouch: false, isLandscape: false});
+    await page.setViewport({
+        width: 480,
+        height: 1024,
+        deviceScaleFactor: 1,
+        isMobile: false,
+        hasTouch: false,
+        isLandscape: false
+    });
     console.log("Setting viewport to: 640x1024");
-    await page.setViewport({ width: 640, height: 1024, deviceScaleFactor: 1, isMobile: false, hasTouch: false, isLandscape: false});
+    await page.setViewport({
+        width: 640,
+        height: 1024,
+        deviceScaleFactor: 1,
+        isMobile: false,
+        hasTouch: false,
+        isLandscape: false
+    });
     console.log("Setting viewport to: 800x1024");
-    await page.setViewport({ width: 800, height: 1024, deviceScaleFactor: 1, isMobile: false, hasTouch: false, isLandscape: false});
+    await page.setViewport({
+        width: 800,
+        height: 1024,
+        deviceScaleFactor: 1,
+        isMobile: false,
+        hasTouch: false,
+        isLandscape: false
+    });
     console.log("Setting viewport to: 1024x1024");
-    await page.setViewport({ width: 1024, height: 1024, deviceScaleFactor: 1, isMobile: false, hasTouch: false, isLandscape: false});
+    await page.setViewport({
+        width: 1024,
+        height: 1024,
+        deviceScaleFactor: 1,
+        isMobile: false,
+        hasTouch: false,
+        isLandscape: false
+    });
 
     // Switch back to the standard device view:
-    await page.setViewport({ width: 1280, height: 1024, deviceScaleFactor: 1, isMobile: false, hasTouch: false, isLandscape: false});
+    await page.setViewport({
+        width: 1280,
+        height: 1024,
+        deviceScaleFactor: 1,
+        isMobile: false,
+        hasTouch: false,
+        isLandscape: false
+    });
 
     console.log("Auto scrolling page...");
-    await autoScroll(page);
+    await behaviour.autoScroll(page);
 
     let res_har = await har.stop();
 
