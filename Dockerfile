@@ -1,6 +1,10 @@
 FROM node:10.17.0-slim
 
-WORKDIR ./puppeteer
+WORKDIR ./webrender
+
+ARG PORT=9000
+
+ENV env_port=$PORT
 
 COPY . .
     
@@ -12,11 +16,9 @@ RUN  apt-get update \
      && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
      && apt-get update \
      && apt-get install -y google-chrome-unstable --no-install-recommends \
-     && rm -rf /var/lib/apt/lists/* \
+     && rm -rf /var/lib/apt/lists/*
 
 RUN npm install puppeteer
 RUN npm install express && npm install chrome-har
 
-CMD node index.js
-
-#docker run -it --mount  src="$(pwd)",target=/puppeteer/screenshots,type=bind arquivo/puppeteer
+CMD node index.js $env_port

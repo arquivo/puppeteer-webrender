@@ -3,9 +3,9 @@ const puppeteer = require('puppeteer');
 const PuppeteerHar = require('./puppeteer-har');
 
 const app = express();
-const port = 9000;
+const port = process.argv[2];
 
-async function autoScroll(page){
+async function autoScroll(page) {
     await page.evaluate(async () => {
         await new Promise((resolve, reject) => {
             var totalHeight = 0;
@@ -15,7 +15,7 @@ async function autoScroll(page){
                 window.scrollBy(0, distance);
                 totalHeight += distance;
 
-                if(totalHeight >= scrollHeight || totalHeight > 4000 ){
+                if (totalHeight >= scrollHeight || totalHeight > 4000) {
                     clearInterval(timer);
                     // Scroll back to the top:
                     window.scrollTo(0, 0);
@@ -27,10 +27,17 @@ async function autoScroll(page){
 }
 
 async function renderScreenshot(url) {
+    // should change this
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
 
-    await page.goto(url);
+    await page.goto(url, {waitUntil: 'load', timeout: 10000}).then(() =>{
+        console.log('Success loading page', url)
+    }).catch((res) => {
+        console.log('Something went wrong loading page', url, res)
+        browser.close()
+        throw res
+    });
 
     let result = await page.screenshot({type: 'jpeg', fullPage: true});
 
@@ -39,7 +46,7 @@ async function renderScreenshot(url) {
     return result;
 }
 
-app.get('/rendering', (request, response) => {
+app.get('/screenshot', (request, response) => {
     // render?url=http....
     console.log("Rendering screenshot for: ", request.query.url);
     renderScreenshot(request.query.url).then( res => {
@@ -96,15 +103,12 @@ app.get('/har', (request, response) => {
             response.send("Something went wrong rendering the page!!")
         }
     });
-})
+});
 
 
 app.listen(port, (err) => {
     if (err) {
         return console.log("something bad happened", err)
     }
-
     console.log(`server is listening on ${port}`)
 });
-
-
