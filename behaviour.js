@@ -19,7 +19,6 @@ async function autoScroll(page) {
     });
 }
 
-
 module.exports = {
-    autoScroll: this.autoScroll
+    autoScroll: autoScroll
 };
