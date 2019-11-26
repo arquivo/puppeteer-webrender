@@ -2,12 +2,6 @@ FROM node:10.17.0-slim
 
 WORKDIR ./webrender
 
-ARG PORT=9000
-
-ENV env_port=$PORT
-
-COPY . .
-    
 RUN  apt-get update \
      # Install latest chrome dev package, which installs the necessary libs to
      # make the bundled version of Chromium that Puppeteer installs work.
@@ -18,7 +12,13 @@ RUN  apt-get update \
      && apt-get install -y google-chrome-unstable --no-install-recommends \
      && rm -rf /var/lib/apt/lists/*
 
-RUN npm install puppeteer
-RUN npm install express && npm install chrome-har
+RUN npm install puppeteer && npm install chrome-har && npm install puppeteer-cluster
+RUN npm install express
+
+COPY . .
+
+ARG PORT=9000
+
+ENV env_port=$PORT
 
 CMD node index.js $env_port
