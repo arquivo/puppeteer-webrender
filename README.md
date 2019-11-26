@@ -18,3 +18,7 @@ wget -O screenshot.jpeg http://localhost:9000/screenshot?url=https://arquivo.pt/
 wget -O page.har http://localhost:9000/har?url=https://arquivo.pt/noFrame/replay/2018/http://www.publico.pt/
 ```
  
+### Patching Webpages
+```
+docker run -it -v "<path_to_file_with_urls.txt>:/webrender/tmp/" arquivo/webrenderer patching.js tmp/urls.tx
+```
