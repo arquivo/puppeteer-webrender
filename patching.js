@@ -3,10 +3,7 @@ const behaviour = require('./behaviour');
 const fs = require('fs');
 
 function readURLFile(path) {
-    return fs.readFileSync(path, 'utf-8').split('\n')
-        .map((elt) => {
-            return elt;
-        });
+    return fs.readFileSync(path, 'utf-8').split('\n');
 }
 
 (async () => {
@@ -19,6 +16,7 @@ function readURLFile(path) {
          console.log("Patching URL", url);
         //let url = url.toString().trim();
         let page = await browser.newPage();
+        page.setDefaultNavigationTimeout(90000);
         let before = Date.now();
 
         try{
