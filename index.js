@@ -1,6 +1,6 @@
 const express = require('express');
 const puppeteer = require('puppeteer');
-const PuppeteerHar = require('./puppeteer-har');
+const PuppeteerHar = require('puppeteer-har');
 const behaviour = require('./behaviour');
 
 const app = express();
@@ -40,7 +40,8 @@ async function generateHar(url) {
     await page.goto(url, 'networkidle2');
 
     const har = new PuppeteerHar(page);
-    har.start();
+    await har.start();
+    await page.goto(url)
 
     // Switch through a few widths to encourage JS-based responsive image loading:
     console.log("Setting viewport to: 480x1024");
