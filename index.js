@@ -14,8 +14,8 @@ async function renderScreenshot(url) {
     await page.goto(url, {waitUntil: 'load', timeout: 10000}).then(() => {
         console.log('Success loading page', url)
     }).catch((err) => {
-        console.log('Something went wrong loading page', url, err)
-        browser.close()
+        console.log('Something went wrong loading page', url, err);
+        browser.close();
         return err;
     });
 
@@ -26,8 +26,11 @@ async function renderScreenshot(url) {
     return result;
 }
 
+app.get('/', (request, response, next) => {
+    response.status(200).send("OK - Service Ready")
+})
+
 app.get('/screenshot', (request, response, next) => {
-    // render?url=http....
     console.log("Rendering screenshot for: ", request.query.url);
     renderScreenshot(request.query.url)
         .then((res) => response.set('Content-Type', 'image/jpeg').send(res))
@@ -41,7 +44,7 @@ async function generateHar(url) {
 
     const har = new PuppeteerHar(page);
     await har.start();
-    await page.goto(url)
+    await page.goto(url);
 
     // Switch through a few widths to encourage JS-based responsive image loading:
     console.log("Setting viewport to: 480x1024");
@@ -101,7 +104,7 @@ async function generateHar(url) {
     return res_har;
 }
 
-app.get('/har', (request, response) => {
+app.get('/har', (request, response, next) => {
     console.log("Rendering page and generating HAR...")
     generateHar(request.query.url)
         .then(res => response.set('Content-Type', 'application/json').send(res))
