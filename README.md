@@ -5,7 +5,7 @@ Exposing an interface to render webpages through puppeteer.
 ### Starting
 
 ```
-docker build . -t arquivo/webrender . --force-rm
+docker build . -t arquivo/webrender --force-rm
 docker run -d -p "9000:9000" arquivo/webrender
 ```
 The default container cmd is to expose two endpoints at port 9000:
