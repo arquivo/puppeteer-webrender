@@ -12,7 +12,7 @@ RUN  apt-get update \
      && apt-get install -y google-chrome-unstable --no-install-recommends \
      && rm -rf /var/lib/apt/lists/*
 
-RUN npm install puppeteer && npm install puppeteer-har && npm install puppeteer-cluster
+RUN npm install puppeteer && npm install puppeteer-har
 RUN npm install express
 
 COPY . .
