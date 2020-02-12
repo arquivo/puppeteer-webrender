@@ -2,9 +2,11 @@
   "name": "arquivo-webrender",
   "version": "1.0.0",
   "description": "Rendering webpages through puppeteer.",
-  "main": "index.js",
+  "main": "app/app.js",
   "scripts": {
-    "test": "node index.js 9000"
+    "start": "node app/app",
+    "test": "jest",
+    "dev": "nodemon app/app"
   },
   "repository": {
     "type": "git",
@@ -20,10 +22,12 @@
   },
   "homepage": "https://github.com/arquivo/puppeteer-webrender#readme",
   "dependencies": {
+    "@types/jest": "^25.1.2",
     "express": "^4.17.1",
-    "fs": "0.0.1-security",
-    "puppeteer": "^2.0.0",
-    "puppeteer-har": "^1.1.2",
-    "yargs": "^15.1.0"
+    "puppeteer": "^2.0.0"
+  },
+  "devDependencies": {
+    "jest": "^25.1.0",
+    "nodemon": "^2.0.2"
   }
 }
