@@ -13,6 +13,5 @@ test("Test timestamp extraction from wayback Url", () => {
 
 test("Test if diacritics are removed", () =>{
     const weird_string = "Some weird title n\u0061me";
-
     expect(removeDiacritics(weird_string) === "Some weird title name");
 })
