@@ -1,6 +1,6 @@
 const puppeteer = require('puppeteer');
 
-async function renderScreenshot(url, type, width, height, timeout) {
+async function renderScreenshot(url, type, width, height, fullPage, timeout) {
     const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
 
@@ -17,7 +17,7 @@ async function renderScreenshot(url, type, width, height, timeout) {
     })
     
     const pageTitle = await page.title();
-    let result = await page.screenshot({type: type, fullPage: true});
+    let result = await page.screenshot({type: type, fullPage: fullPage});
 
     await browser.close();
 

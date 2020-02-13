@@ -24,8 +24,10 @@ app.get('/', (request, response, next) => {
 })
 
 app.get('/screenshot', (request, response, next) => {
-    width = isNaN(request.query.width) ? width : parseInt(request.query.width)
-    height = isNaN(request.query.height) ? height : parseInt(request.query.height)
+    width = isNaN(request.query.width) ? width : parseInt(request.query.width);
+    height = isNaN(request.query.height) ? height : parseInt(request.query.height);
+
+    let fullPage = (request.query.fullpage == null) ? true : utils.textBoolean(request.query.fullage);
     
     // verify if root domain match. if not allowed return forbidden operation. if not continue.
     let validUrl = render.validateUrl(request.query.url, allowedDomains);
@@ -33,12 +35,13 @@ app.get('/screenshot', (request, response, next) => {
         response.status(405).send('Method not Allowed')
     }
     else {
-        render.renderScreenshot(request.query.url, 'png', width, height, timeout)
+        render.renderScreenshot(decodeURI(request.query.url), 'png', width, height, fullPage, timeout)
             .then((res) => {
                 screenshotContent = res[1];
                 if (request.query.download) {
                     let timestamp = utils.extractTimeWaybackUrl(request.query.url);
                     let ts = timestamp != null ? `-${timestamp}` : '';
+
                     // TODO ugh refactor this
                     fileName = utils.removeDiacritics(res[0]).replace(/[^a-z0-9]/gi, '-').replace(/[-]+/g,'-').toLowerCase().substring(0,30) + ts +'.png';
                     response.set("Content-Disposition", `attachment; filename=${fileName}`)

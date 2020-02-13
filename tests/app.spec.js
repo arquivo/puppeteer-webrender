@@ -12,14 +12,14 @@ describe('Test GET /', () => {
 
 describe('Test GET /screenshot', () => {
     test('Getting a screenshot image', async () => {
-        const res = await request.get('/screenshot?url=https://arquivo.pt/wayback/19980205082901/http://www.caleida.pt/saramago/')
+        const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/19980205082901/http://www.caleida.pt/saramago/')
         expect(res.status).toBe(200);
-        expect(res.header).toHaveProperty('content-type', 'image/png')
+        expect(res.header).toHaveProperty('content-type', 'image/png');
     });
     
     test('Getting a downloable screenshot image', async () => {
-      const fileName = 'bemvindo-a-caleida-preservado--19980205082901.png'
-      const res = await request.get('/screenshot?url=https://arquivo.pt/wayback/19980205082901/http://www.caleida.pt/&download=true');
+      const fileName = 'bemvindo-a-caleida-19980205082901.png'
+      const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/19980205082901/http://www.caleida.pt/&download=true');
 
       expect(res.status).toBe(200);
       expect(res.header).toHaveProperty('content-type', 'application/octect-stream');
@@ -27,15 +27,19 @@ describe('Test GET /screenshot', () => {
     });
 
     test('Requesting a screenshot image with a specific resolution (800x800)', async () => {
-        const res = await request.get('/screenshot?url=https://arquivo.pt/wayback/19980205082901/http://www.caleida.pt/saramago/&width=800&height=900')
+        const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/19980205082901/http://www.caleida.pt/saramago/&width=800&height=900');
         expect(res.status).toBe(200);
-        expect(res.header).toHaveProperty('content-length', '128513');
+        expect(res.header).toHaveProperty('content-length', '124315');
     });
 
     test('Requesting not allowed domain url screenshot', async () => {
-        const res = await request.get('/screenshot?url=https://sobre.arquivo.pt/')
+        const res = await request.get('/screenshot?url=https://sobre.arquivo.pt/');
         expect(res.status).toBe(405);
-    })
+    });
 
-    
+    test('Requesting not fullpage screenshot', async () => {
+        const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/http://sobre.arquivo.pt&fullpage=false');
+        expect(res.status).toBe(200);
+        expect(res.header).toHaveProperty('content-length', '97536');
+    }, 10000);
 })
