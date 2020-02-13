@@ -2,7 +2,6 @@ const { validateUrl } = require('../app/render');
 const { renderScreenshot } = require('../app/render');
 
 
-
 test("Test if validateUrl is working correctly", () => {
     const testUrl1 = "http://covesantigas.com/image.jpg";
     const testUrl2 = "http://arquivo.pt/wayback/2018/http://sapo.pt";
@@ -32,7 +31,7 @@ const getMimetype = (signature) => {
 };
 
 test("Test screenshot rendering", () => {
-    return renderScreenshot('https://arquivo.pt/noFrame/replay/20200117173921/http://senior3045.ipportalegre.pt/', 1280, 900, 10000).then( res => {
+    return renderScreenshot('https://arquivo.pt/noFrame/replay/20200117173921/http://senior3045.ipportalegre.pt/', 'png', 1280, 900, 10000).then( res => {
         expect(res[0]).toBe('Senior3045 Home page');
 
         const uint = new Uint8Array(res[1]);
@@ -41,6 +40,6 @@ test("Test screenshot rendering", () => {
             bytes.push(byte.toString(16))
         });
         const hex = bytes.join('').toLocaleUpperCase();
-        expect(getMimetype(hex.slice(0,8))).toBe('image/jpeg');
+        expect(getMimetype(hex.slice(0,8))).toBe('image/png');
     })
 });
