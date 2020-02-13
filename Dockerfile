@@ -12,13 +12,12 @@ RUN  apt-get update \
      && apt-get install -y google-chrome-unstable --no-install-recommends \
      && rm -rf /var/lib/apt/lists/*
 
-RUN npm install puppeteer && npm install puppeteer-har
-RUN npm install express
-
 COPY . .
 
-ARG PORT=9000
+RUN npm install
 
-ENV env_port=$PORT
+ARG PORT=5000
 
-CMD node index.js $env_port
+ENV PORT=$PORT
+
+CMD node app/app.js
