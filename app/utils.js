@@ -9,6 +9,11 @@ function extractTimeWaybackUrl(url){
     }
 }
 
+function textBoolean(text){
+    if (text === 'true') return true;
+    if (text === 'false') return false;
+    return null;
+}
 
 function removeDiacritics(str) {
     const defaultDiacriticsRemovalMap = [
@@ -105,3 +110,4 @@ function removeDiacritics(str) {
 
 module.exports.removeDiacritics = removeDiacritics;
 module.exports.extractTimeWaybackUrl = extractTimeWaybackUrl;
+module.exports.textBoolean = textBoolean;

@@ -31,7 +31,7 @@ const getMimetype = (signature) => {
 };
 
 test("Test screenshot rendering", () => {
-    return renderScreenshot('https://arquivo.pt/noFrame/replay/20200117173921/http://senior3045.ipportalegre.pt/', 'png', 1280, 900, 10000).then( res => {
+    return renderScreenshot('https://arquivo.pt/noFrame/replay/20200117173921/http://senior3045.ipportalegre.pt/', 'png', 1280, 900, true, 10000).then( res => {
         expect(res[0]).toBe('Senior3045 Home page');
 
         const uint = new Uint8Array(res[1]);
