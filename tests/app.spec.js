@@ -42,4 +42,11 @@ describe('Test GET /screenshot', () => {
         expect(res.status).toBe(200);
         expect(res.header).toHaveProperty('content-length', '97536');
     }, 10000);
+
+    test('Requesting page that needs URL Enconding', async () => {
+        const res = await request.get('/screenshot?url=' + encodeURI('https://arquivo.pt/noFrame/replay/20170215220854/http://www.cidadao.gov.ao/VerServicoPDFPrint.aspx?id=209&tipo=imprimir') + '&download=true');
+        expect(res.status).toBe(200);
+        expect(res.header).toHaveProperty('content-type', 'application/octect-stream');
+        expect(res.header).toHaveProperty('content-disposition', `attachment; filename=${fileName}`);
+    })
 })
