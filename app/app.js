@@ -32,7 +32,7 @@ app.get('/screenshot', (request, response, next) => {
     // verify if root domain match. if not allowed return forbidden operation. if not continue.
     let validUrl = render.validateUrl(request.query.url, allowedDomains);
     if (!validUrl){
-        response.status(405).send('Method not Allowed')
+        response.status(405).send("Wrong root domain to execute the screenshot.");
     }
     else {
         render.renderScreenshot(decodeURI(request.query.url), 'png', width, height, fullPage, timeout)
