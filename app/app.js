@@ -6,7 +6,7 @@ const utils = require('./utils');
 const app = express();
 const port = process.env.PORT || 5000;
 const allowedDomains = process.env.ALLOWED_DOMAINS || ['arquivo.pt']
-const timeout = process.env.SCREENSHOT_TIMEOUT || 20000; 
+const timeout = process.env.SCREENSHOT_TIMEOUT || 60000; 
 
 let width = process.env.SCREENSHOT_WIDTH || 1280;
 let height = process.env.SCREENSHOT_HEIGHT || 900;
@@ -52,7 +52,9 @@ app.get('/screenshot', (request, response, next) => {
                     response.set('Content-Type', 'image/png').send(screenshotContent)
                 }
             })
-            .catch(error => next(error))
+            .catch( error => {
+                response.status(500).send("Something went wrong taking the screenshot.");
+            });
     }    
 });
 
