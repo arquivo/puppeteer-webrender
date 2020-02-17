@@ -1,7 +1,5 @@
 FROM node:10.17.0-slim
 
-WORKDIR ./webrender
-
 RUN  apt-get update \
      # Install latest chrome dev package, which installs the necessary libs to
      # make the bundled version of Chromium that Puppeteer installs work.
@@ -11,6 +9,14 @@ RUN  apt-get update \
      && apt-get update \
      && apt-get install -y google-chrome-stable --no-install-recommends \
      && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -ms /bin/bash webrender
+
+WORKDIR /webrender
+
+RUN chown -R webrender:webrender .
+
+USER webrender
 
 COPY . .
 

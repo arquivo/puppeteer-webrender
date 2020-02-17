@@ -17,6 +17,8 @@ let height = process.env.SCREENSHOT_HEIGHT || 900;
 (async () => {
     // launch puppetter cluster
     const cluster = await Cluster.launch({
+        // FIXME we should be able to run this in a container with sandbox mode
+        puppeteerOptions: {args: ['--no-sandbox', '--disable-setuid-sandbox'] },  
         concurrency: Cluster.CONCURRENCY_CONTEXT,
         maxConcurrency: maxConcurrency,
     })
