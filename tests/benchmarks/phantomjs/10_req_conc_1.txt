@@ -1,0 +1,10 @@
+Total: 11,632450s
+Total: 10,635304s
+Total: 16,594536s
+Total: 10,178844s
+Total: 21,066226s
+Total: 14,394608s
+Total: 16,009068s
+Total: 10,854623s
+Total: 11,424697s
+Total: 15,170464s

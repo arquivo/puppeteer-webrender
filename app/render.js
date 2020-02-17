@@ -1,11 +1,9 @@
 const puppeteer = require('puppeteer');
 
-async function renderScreenshot(url, type, width, height, fullPage, timeout) {
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
-    const page = await browser.newPage();
+async function renderScreenshot(page, url, type, width, height, fullPage, timeout) {
+    page.setDefaultTimeout(timeout);
 
-    await page.goto(url, {waitUntil: 'load', timeout: timeout}).then(() => {
-    }).catch((err) => {
+    await page.goto(url, {waitUntil: 'load'}).catch((err) => {
         console.log('Something went wrong loading page', url, err);
         browser.close();
         return err;
@@ -17,9 +15,10 @@ async function renderScreenshot(url, type, width, height, fullPage, timeout) {
     })
     
     const pageTitle = await page.title();
-    let result = await page.screenshot({type: type, fullPage: fullPage});
-
-    await browser.close();
+    let result = await page.screenshot({type: type, fullPage: fullPage}).catch((err) => {
+        console.log('Something went wrong screenshoting the page', url, err);
+        return err;
+    });
 
     return [ pageTitle, result ];
 }
