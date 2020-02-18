@@ -1,5 +1,6 @@
 const { validateUrl } = require('../app/render');
 const { renderScreenshot } = require('../app/render');
+const { Cluster } = require('puppeteer-cluster');
 
 
 test("Test if validateUrl is working correctly", () => {
@@ -30,16 +31,35 @@ const getMimetype = (signature) => {
     }
 };
 
-test("Test screenshot rendering", () => {
-    return renderScreenshot('https://arquivo.pt/noFrame/replay/20200117173921/http://senior3045.ipportalegre.pt/', 'png', 1280, 900, true, 10000).then( res => {
-        expect(res[0]).toBe('Senior3045 Home page');
+test("Test screenshot rendering", async () => {
 
-        const uint = new Uint8Array(res[1]);
-        let bytes = [];
-        uint.forEach((byte) => {
-            bytes.push(byte.toString(16))
-        });
-        const hex = bytes.join('').toLocaleUpperCase();
-        expect(getMimetype(hex.slice(0,8))).toBe('image/png');
+    // setup task
+    const cluster = await Cluster.launch({
+        // FIXME we should be able to run this in a container with sandbox mode
+        puppeteerOptions: { args: ['--no-sandbox', '--disable-setuid-sandbox'] },  
+        concurrency: Cluster.CONCURRENCY_CONTEXT,
+        maxConcurrency: 1,
     })
+
+    await cluster.task(renderScreenshot);
+
+    var parametersObject = new Object();
+    parametersObject.url = 'https://arquivo.pt/noFrame/replay/20200117173921/http://senior3045.ipportalegre.pt/';
+    parametersObject.type = 'png';
+    parametersObject.width = 1280;
+    parametersObject.height = 900;
+    parametersObject.fullPage = true;
+    parametersObject.timeout = 10000;
+
+    let res = await cluster.execute(parametersObject);
+    expect(res[0]).toBe('Senior3045 Home page');
+
+    const uint = new Uint8Array(res[1]);
+    let bytes = [];
+    uint.forEach((byte) => {
+        bytes.push(byte.toString(16))
+    });
+    const hex = bytes.join('').toLocaleUpperCase();
+
+    expect(getMimetype(hex.slice(0,8))).toBe('image/png');
 });

@@ -1,7 +1,7 @@
-const app = require('../app/app');
+const app_export = require('../app/app');
 const supertest = require('supertest');
 
-const request = supertest(app);
+const request = supertest(app_export);
 
 describe('Test GET /', () => {
     test('Service up satus code', async () => {        
