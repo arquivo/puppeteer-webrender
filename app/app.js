@@ -3,8 +3,6 @@ const render = require('./render');
 const utils = require('./utils');
 const { Cluster } = require('puppeteer-cluster');
 
-// launch server
-const app = express();
 const port = process.env.PORT || 5000;
 const allowedDomains = process.env.ALLOWED_DOMAINS || ['arquivo.pt']
 const timeout = process.env.SCREENSHOT_TIMEOUT || 60000; 
@@ -14,46 +12,26 @@ const maxConcurrency = process.env.MAX_CONCURRENCY || 5;
 let width = process.env.SCREENSHOT_WIDTH || 1280;
 let height = process.env.SCREENSHOT_HEIGHT || 900;
 
+// launch server
+const app = express();
+
 (async () => {
-    // launch puppetter cluster
-    const cluster = await Cluster.launch({
-        // FIXME we should be able to run this in a container with sandbox mode
-        puppeteerOptions: {args: ['--no-sandbox', '--disable-setuid-sandbox'] },  
-        concurrency: Cluster.CONCURRENCY_CONTEXT,
-        maxConcurrency: maxConcurrency,
-    })
-
-    // TODO make this a isolated function, to be testable.
-    await cluster.task(async ({ page, data: parametersObject }) => {
-        page.setDefaultTimeout(parametersObject.timeout);
-
-        await page.goto(parametersObject.url, {waitUntil: 'load'}).catch((err) => {
-            console.log('Something went wrong loading page', url, err);
-            browser.close();
-            return err;
-        });
-    
-        await page.setViewport({
-            width: parametersObject.width,
-            height: parametersObject.height
-        })
-        
-        const pageTitle = await page.title();
-        let result = await page.screenshot({type: parametersObject.type, fullPage: parametersObject.fullPage}).catch((err) => {
-            console.log('Something went wrong screenshoting the page', url, err);
-            return err;
-        });
-    
-        return [ pageTitle, result ];
-    });
-
     app.listen(port, (err) => {
         if (err) {
             return console.log("something bad happened", err)
         }
     });
 
-    // middleware always takes (req, res, next) next is the next middleware function
+    // launch puppetter cluster
+    const cluster = await Cluster.launch({
+        // FIXME we should be able to run this in a container with sandbox mode
+        puppeteerOptions: { args: ['--no-sandbox', '--disable-setuid-sandbox'] },  
+        concurrency: Cluster.CONCURRENCY_CONTEXT,
+        maxConcurrency: maxConcurrency,
+    })
+
+    await cluster.task(render.renderScreenshot);
+
     app.get('/', (request, response, next) => {
         response.status(200).send("OK - Service Ready")
     })
@@ -71,7 +49,7 @@ let height = process.env.SCREENSHOT_HEIGHT || 900;
         }
         else {
             var parametersObject = new Object();
-            parametersObject.url = request.query.url;
+            parametersObject.url = decodeURI(request.query.url);
             parametersObject.type = type;
             parametersObject.width = width;
             parametersObject.height = height;
