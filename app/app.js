@@ -49,7 +49,7 @@ const app = express();
         }
         else {
             var parametersObject = new Object();
-            parametersObject.url = request.query.url;
+            parametersObject.url = decodeURI(request.query.url);
             parametersObject.type = type;
             parametersObject.width = width;
             parametersObject.height = height;
