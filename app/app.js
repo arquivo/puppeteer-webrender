@@ -31,12 +31,12 @@ const app = express();
     })
 
     await cluster.task(render.renderScreenshot);
-
-    app.get('/', (request, response, next) => {
+    
+    app.get('', (request, response, next) => {
         response.status(200).send("OK - Service Ready")
     })
 
-    app.get('/screenshot', (request, response, next) => {
+    app.get('/screenshot(/)?', (request, response, next) => {
         width = isNaN(request.query.width) ? width : parseInt(request.query.width);
         height = isNaN(request.query.height) ? height : parseInt(request.query.height);
 
