@@ -4,9 +4,9 @@
   "description": "Rendering webpages through puppeteer.",
   "main": "app/app.js",
   "scripts": {
-    "start": "node app/app.js",
+    "start": "node app/start.js",
     "test": "jest",
-    "dev": "nodemon app/app"
+    "dev": "nodemon app/start"
   },
   "repository": {
     "type": "git",
