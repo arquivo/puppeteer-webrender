@@ -26,4 +26,4 @@ ARG PORT=5000
 
 ENV PORT=$PORT
 
-CMD node app/app.js
+CMD node app/start.js
