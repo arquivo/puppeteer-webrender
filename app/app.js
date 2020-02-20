@@ -34,14 +34,16 @@ Cluster.launch({
             let fullPage = (request.query.fullpage == null) ? true : utils.textBoolean(request.query.fullage);
         
             // verify if root domain match. if not allowed return forbidden operation. if not continue.
-            let allowedDomainsArray = allowedDomains.split(',');
-            let validUrl = render.validateUrl(request.query.url, allowedDomainsArray);
+            const allowedDomainsArray = allowedDomains.split(',');
+
+            let urlParameter = decodeURI(request.query.url);
+            let validUrl = render.validateUrl(urlParameter, allowedDomainsArray);
             if (!validUrl){
                 response.status(405).send("Wrong URL to execute the screenshot.");
             }
             else {
                 var parametersObject = new Object();
-                parametersObject.url = decodeURI(request.query.url);
+                parametersObject.url = urlParameter;
                 parametersObject.type = type;
                 parametersObject.width = width;
                 parametersObject.height = height;
