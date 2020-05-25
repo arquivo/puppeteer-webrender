@@ -1,6 +1,6 @@
 # puppeteer-webrender
 
-Exposing an interface to render webpages through puppeteer.
+Web Service that generates Web Pages Screenshots, rendering them with Chromium through Puppeteer.
 
 ### Starting
 
