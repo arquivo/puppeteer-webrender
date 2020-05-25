@@ -3,7 +3,7 @@
 Web Service that generates Web Pages Screenshots, rendering them with Chromium through Puppeteer.
 
 ### Starting
-
+```
 docker build . -t arquivo/webrender --force-rm
 docker run -d -p "5000:5000" arquivo/webrender
 ```
