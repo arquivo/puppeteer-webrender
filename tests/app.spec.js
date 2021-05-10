@@ -1,10 +1,23 @@
 const app_export = require('../app/app');
+const { Cluster } = require('puppeteer-cluster');
 const supertest = require('supertest');
 
 const request = supertest(app_export);
 
+let cluster;
+beforeAll(async () => {
+  cluster = await Cluster.launch({
+      concurrency: Cluster.CONCURRENCY_CONTEXT,
+      maxConcurrency: 5,
+  });
+});
+
+afterAll(async () => {
+  await cluster.close();
+});
+
 describe('Test GET /', () => {
-    test('Service up satus code', async () => {        
+    test('Service up status code', async () => {        
         const res = await request.get('/');
         expect(res.status).toBe(200);
     });
@@ -12,14 +25,14 @@ describe('Test GET /', () => {
 
 describe('Test GET /screenshot', () => {
     test('Getting a screenshot image', async () => {
-        const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/19980205082901/http://www.caleida.pt/saramago/')
+        const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/19980205082901/http://www.caleida.pt/saramago/&download=false')
         expect(res.status).toBe(200);
         expect(res.header).toHaveProperty('content-type', 'image/png');
     });
-    
+
     test('Getting a downloable screenshot image', async () => {
-      const fileName = 'bemvindo-a-caleida-19980205082901.png'
-      const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/19980205082901/http://www.caleida.pt/&download=true');
+      const fileName = 'jose-saramago-home-page-19980205082901.png'
+      const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/19980205082901/http://www.caleida.pt/saramago/&download=true');
 
       expect(res.status).toBe(200);
       expect(res.header).toHaveProperty('content-type', 'application/octect-stream');
@@ -29,7 +42,7 @@ describe('Test GET /screenshot', () => {
     test('Requesting a screenshot image with a specific resolution (800x800)', async () => {
         const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/19980205082901/http://www.caleida.pt/saramago/&width=800&height=900');
         expect(res.status).toBe(200);
-        expect(res.header).toHaveProperty('content-length', '124315');
+        expect(res.header).toHaveProperty('content-length', '125847');
     });
 
     test('Requesting not allowed domain url screenshot', async () => {
@@ -38,10 +51,10 @@ describe('Test GET /screenshot', () => {
     });
 
     test('Requesting not fullpage screenshot', async () => {
-        const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/http://sobre.arquivo.pt&fullpage=false');
+        const res = await request.get('/screenshot?url=https://arquivo.pt/noFrame/replay/19980205082901/http://www.caleida.pt/saramago/&fullpage=false');
         expect(res.status).toBe(200);
-        expect(res.header).toHaveProperty('content-length', '97536');
-    }, 10000);
+        expect(res.header).toHaveProperty('content-length', '125847');
+    });
 
     test('Requesting page that needs URL Enconding', async () => {
         const res = await request.get('/screenshot?url=' + encodeURI('https://arquivo.pt/noFrame/replay/20170215220854/http://www.cidadao.gov.ao/VerServicoPDFPrint.aspx?id=209&tipo=imprimir') + '&download=true');
@@ -49,4 +62,4 @@ describe('Test GET /screenshot', () => {
         expect(res.header).toHaveProperty('content-type', 'application/octect-stream');
         expect(res.header).toHaveProperty('content-disposition', `attachment; filename=${fileName}`);
     })
-})
+});
