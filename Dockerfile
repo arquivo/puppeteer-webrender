@@ -1,14 +1,16 @@
-FROM node:10.17.0-slim
+FROM node:12-slim
 
-RUN  apt-get update \
-     # Install latest chrome dev package, which installs the necessary libs to
-     # make the bundled version of Chromium that Puppeteer installs work.
+RUN apt-get update \
      && apt-get install -y wget --no-install-recommends \
-     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
-     && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
-     && apt-get update \
-     && apt-get install -y google-chrome-stable --no-install-recommends \
-     && rm -rf /var/lib/apt/lists/*
+     && apt-get install -y gnupg gnupg1 gnupg2
+
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+
+RUN apt-get update \
+     && apt-get install -y libxext6:amd64 google-chrome-stable --no-install-recommends
+
+RUN rm -rf /var/lib/apt/lists/*
 
 RUN useradd -ms /bin/bash webrender
 
